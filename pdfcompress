@@ -1,0 +1,25 @@
+#!/bin/bash
+
+compress2() {
+	pdf2ps $1 $2
+	ps2pdf $2 $1
+}
+
+if (( $# < 1 )); then
+	echo "USAGE: $0 [default|screen|ebook|printer|prepress] input.pdf output.pdf"
+	exit
+fi
+
+case $1 in
+	default ) COMPRESS_COMMAND=/$1;shift;;
+	screen ) COMPRESS_COMMAND=/$1;shift;;
+	ebook ) COMPRESS_COMMAND=/$1;shift;;
+	printer ) COMPRESS_COMMAND=/$1;shift;;
+	prepress ) COMPRESS_COMMAND=/$1;shift;;
+	* ) COMPRESS_COMMAND=/default;;
+esac
+
+OUTPUT=${2:-${1%%.pdf}-compress.pdf}
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$COMPRESS_COMMAND -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$OUTPUT" "$1"
+
